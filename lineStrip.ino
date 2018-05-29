@@ -32,7 +32,7 @@ void loop() {
   //rainbowCycle(1);
   //ColorTest();
   //ZigZag();
-  Flare(20);  
+  Flare();  
 }
 
 // Slightly different, this makes the rainbow equally distributed throughout
@@ -104,7 +104,7 @@ bool Listen(){
   }
 }
 
-void Flare(uint8_t wait){
+void Flare(){
   if (Listen()){
     for(int16_t i,j,k,l,m,n,o,p,q,r=0; i<strip.numPixels()+5;i++){
       strip.setPixelColor(i,255,255,255);
