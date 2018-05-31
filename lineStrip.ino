@@ -108,7 +108,7 @@ bool Listen(){
 
 void Flare(uint8_t wait){
   if (Listen()){
-    for(int16_t i,j,k,l,m,n,o,p,q,r=0; i<strip.numPixels()+5;i++){
+    for(int16_t i=0; i<strip.numPixels()+5;i++){
       strip.setPixelColor(i,255,255,255);
       strip.setPixelColor(i-1,200,200,200);
       strip.setPixelColor(i-2,150,150,150);
