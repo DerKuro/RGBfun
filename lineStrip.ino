@@ -20,6 +20,8 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(182, PIN, NEO_GRB + NEO_KHZ800);
 // and minimize distance between Arduino and first pixel.  Avoid connecting
 // on a live circuit...if you must, connect GND first.
 
+uint8_t Pixels[(strip.numPixels())], nextPixels(strip.numPixels());
+
 void setup() {
   Serial.begin(9600);
   strip.begin();
@@ -32,7 +34,7 @@ void loop() {
   //rainbowCycle(1);
   //ColorTest();
   //ZigZag();
-  Flare();  
+  Flare(20);  
 }
 
 // Slightly different, this makes the rainbow equally distributed throughout
@@ -104,7 +106,7 @@ bool Listen(){
   }
 }
 
-void Flare(){
+void Flare(uint8_t wait){
   if (Listen()){
     for(int16_t i,j,k,l,m,n,o,p,q,r=0; i<strip.numPixels()+5;i++){
       strip.setPixelColor(i,255,255,255);
