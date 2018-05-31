@@ -20,7 +20,7 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(182, PIN, NEO_GRB + NEO_KHZ800);
 // and minimize distance between Arduino and first pixel.  Avoid connecting
 // on a live circuit...if you must, connect GND first.
 
-uint8_t Pixels[(strip.numPixels())], nextPixels(strip.numPixels());
+uint8_t Pixels[strip.numPixels()], nextPixels[strip.numPixels()];
 
 void setup() {
   Serial.begin(9600);
