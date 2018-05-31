@@ -27,14 +27,15 @@ void setup() {
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
   strip.setBrightness(255);
-  
 }
 
 void loop() {
   //rainbowCycle(1);
   //ColorTest();
   //ZigZag();
-  Flare(20);  
+  if (Listen()){
+    newFlare();  
+  }
 }
 
 // Slightly different, this makes the rainbow equally distributed throughout
@@ -106,24 +107,23 @@ bool Listen(){
   }
 }
 
-void Flare(uint8_t wait){
+void newFlare(){
   if (Listen()){
-    for(int16_t i=0; i<strip.numPixels()+5;i++){
-      strip.setPixelColor(i,255,255,255);
-      strip.setPixelColor(i-1,200,200,200);
-      strip.setPixelColor(i-2,150,150,150);
-      strip.setPixelColor(i-3,150,150,150);
-      strip.setPixelColor(i-4,150,150,150);
-      strip.setPixelColor(i-5,0,0,0);
-      strip.show();
-      if(i<3)
-        delay(100);
-      if(i>3 && i<8)
-        delay(50);
-      if(i>8 && i<100)
-        delay(0);
-      if(i>130)
-        delay(8);
+    Pixels[0]=true;
+  }
+}
+
+void Shift(){
+  for(int8_t i=0; i<strip.numPixels()-1;i++){
+    if(Pixels[i]){
+      Pixels[i]=false;
+      if[i+1<strip.numPixels()]{
+        nextPixels[i+1]=true
+       }  
     }
-  }  
+  }
+  for(int8_t i=0; i<strip.numPixels()-1;i++){
+    Pixels[i]=nextPixels[i];
+    nextPixels[i]=false;  
+  }
 }
