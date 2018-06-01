@@ -27,7 +27,7 @@ void setup() {
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
   strip.setBrightness(255);
-  for(uint8_t i = 0; i<(strip.numPixels()-1);i++){
+  for(uint8_t i = 0; i<(strip.numPixels());i++){
     Pixels[i]=false;
     nextPixels[i]=false;
   }
@@ -40,6 +40,7 @@ void loop() {
   if (Listen()){
     newFlare();  
   }
+  Shift();
 }
 
 // Slightly different, this makes the rainbow equally distributed throughout
@@ -118,7 +119,7 @@ void newFlare(){
 }
 
 void Shift(){
-  for(int8_t i=0; i<strip.numPixels()-1;i++){
+  for(int8_t i=0; i<strip.numPixels();i++){
     if(Pixels[i]){
       Pixels[i]=false;
       if[i+1<strip.numPixels()]{
@@ -126,7 +127,7 @@ void Shift(){
        }  
     }
   }
-  for(int8_t i=0; i<strip.numPixels()-1;i++){
+  for(int8_t i=0; i<strip.numPixels();i++){
     Pixels[i]=nextPixels[i];
     nextPixels[i]=false;  
   }
