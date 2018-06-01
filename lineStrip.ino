@@ -20,11 +20,13 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(PIXELCOUNT, PIN, NEO_GRB + NEO_KHZ80
 // and minimize distance between Arduino and first pixel.  Avoid connecting
 // on a live circuit...if you must, connect GND first.
 
-bool Pixels[PIXELCOUNT], nextPixels[PIXELCOUNT];
+bool Pixels[PIXELCOUNT+1], nextPixels[PIXELCOUNT+1];
 String received = "";
+uint8_t counter = 0;
 
 void setup() {
-  Serial.begin(1200);
+  Serial.begin(9600);
+  Serial.setTimeout(0);
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
   strip.setBrightness(255);
@@ -36,15 +38,10 @@ void setup() {
 
 void loop() {
   if (Serial.available() > 0) { //get input from serial
-    received = Serial.readString();
-  }
-  if (received == "1") {
+    Serial.readString();
     NewFlare();
-    received = "";
   }
-  else {
-    received = "";
-  }
+  counter++;
   ShowFlare();
   Shift();
 }
@@ -64,60 +61,19 @@ uint32_t Wheel(byte WheelPos) {
   return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
 }
 
-//Static Color Test, fill strip with rainbow and color reversal at the middle of the strip
-void ColorTest() {
-  for (uint16_t i = 0;                        i < (PIXELCOUNT / 2); i++) {
-    strip.setPixelColor(i, Wheel((i * 256 / PIXELCOUNT) & 255));
-  }
-
-  for (uint16_t i = PIXELCOUNT; i > (PIXELCOUNT / 2); i--) {
-    strip.setPixelColor(i, Wheel((i * 256 / PIXELCOUNT) & 255));
-  }
-  strip.show();
-}
-
-void ZigZag() {
-  bool zig = false;
-  for (uint8_t i = 0; i < PIXELCOUNT; i++) {
-    if (zig) {
-      strip.setPixelColor(i, 255, 0, 0);
-      zig = false;
-    }
-    else {
-      strip.setPixelColor(i, 0, 0, 255);
-      zig = true;
-    }
-  }
-  strip.show();
-}
-
-/*bool Listen() {
-  if (Serial.available() > 0) { //get input from serial
-    //delay(25);
-    received = Serial.readString();
-  }
-  if (received == "1") {
-    return true;
-  }
-  else {
-    received = "";
-    return false;
-  }
-  }*/
-
 void NewFlare() {
   Pixels[0] = true;
 }
 
 void Shift() {
-  for (uint8_t i = 0; i < PIXELCOUNT; i++) {
-    
-    if (Pixels[i] && (i + 1 < PIXELCOUNT)) {
+  for (uint8_t i = 0; i < PIXELCOUNT+1; i++) {
+
+    if (Pixels[i] && (i + 1 < PIXELCOUNT+1)) {
       nextPixels[i + 1] = true;
       Pixels[i] = false;
     }
   }
-  for (uint8_t i = 0; i < PIXELCOUNT; i++) {
+  for (uint8_t i = 0; i < PIXELCOUNT+1; i++) {
     Pixels[i] = nextPixels[i];
     nextPixels[i] = false;
   }
@@ -126,8 +82,8 @@ void Shift() {
 void ShowFlare() {
   for (uint8_t i = 0; i < (PIXELCOUNT+1); i++) {
     if (Pixels[i]) {
-      strip.setPixelColor(i, 255, 255, 255);
-      strip.setPixelColor((i-1), 0, 0, 0);
+      strip.setPixelColor(i, Wheel(counter));
+      strip.setPixelColor((i - 1), 0, 0, 0);
     }
   }
   strip.show();
