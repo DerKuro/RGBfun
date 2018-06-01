@@ -21,9 +21,10 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(PIXELCOUNT, PIN, NEO_GRB + NEO_KHZ80
 // on a live circuit...if you must, connect GND first.
 
 bool Pixels[PIXELCOUNT], nextPixels[PIXELCOUNT];
+String received = "";
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(1200);
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
   strip.setBrightness(255);
@@ -34,27 +35,18 @@ void setup() {
 }
 
 void loop() {
-  //rainbowCycle(1);
-  //ColorTest();
-  //ZigZag();
-  if (Listen()) {
-    newFlare();
+  if (Serial.available() > 0) { //get input from serial
+    received = Serial.readString();
   }
-  Shift();
+  if (received == "1") {
+    NewFlare();
+    received = "";
+  }
+  else {
+    received = "";
+  }
   ShowFlare();
-}
-
-// Slightly different, this makes the rainbow equally distributed throughout
-void rainbowCycle(uint8_t wait) {
-  uint16_t i, j;
-
-  for (j = 0; j < 256 * 5; j++) { // 5 cycles of all colors on wheel
-    for (i = 0; i < PIXELCOUNT; i++) {
-      strip.setPixelColor(i, Wheel((((i * 256 / PIXELCOUNT) + j) & 255)));
-    }
-    strip.show();
-    delay(wait);
-  }
+  Shift();
 }
 
 // Input a value 0 to 255 to get a color value.
@@ -99,8 +91,7 @@ void ZigZag() {
   strip.show();
 }
 
-bool Listen() {
-  String received = "";
+/*bool Listen() {
   if (Serial.available() > 0) { //get input from serial
     //delay(25);
     received = Serial.readString();
@@ -109,35 +100,35 @@ bool Listen() {
     return true;
   }
   else {
+    received = "";
     return false;
   }
-}
+  }*/
 
-void newFlare() {
-  if (Listen()) {
-    Pixels[0] = true;
-  }
+void NewFlare() {
+  Pixels[0] = true;
 }
 
 void Shift() {
-  for (int8_t i = 0; i < PIXELCOUNT; i++) {
-    if (Pixels[i]) {
+  for (uint8_t i = 0; i < PIXELCOUNT; i++) {
+    
+    if (Pixels[i] && (i + 1 < PIXELCOUNT)) {
+      nextPixels[i + 1] = true;
       Pixels[i] = false;
-      if (i + 1 < PIXELCOUNT) {
-        nextPixels[i + 1] = true;
-      }
     }
   }
-  for (int8_t i = 0; i < PIXELCOUNT; i++) {
+  for (uint8_t i = 0; i < PIXELCOUNT; i++) {
     Pixels[i] = nextPixels[i];
     nextPixels[i] = false;
   }
 }
 
 void ShowFlare() {
-  for (uint8_t i = 0; i < PIXELCOUNT; i++) {
+  for (uint8_t i = 0; i < (PIXELCOUNT+1); i++) {
     if (Pixels[i]) {
       strip.setPixelColor(i, 255, 255, 255);
+      strip.setPixelColor((i-1), 0, 0, 0);
     }
   }
+  strip.show();
 }
